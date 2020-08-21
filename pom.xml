@@ -8,10 +8,6 @@
 	<properties>
 		<!-- ======== GENERAL -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<!-- ======== JADE -->
-		<jade.version>4.5.0</jade.version>
-		<jade-misc.version>2.8.0</jade-misc.version>
-		<jade-xml-codec.version>1.11.0</jade-xml-codec.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -19,21 +15,7 @@
 			<artifactId>spring-kafka</artifactId>
 			<version>2.5.2.RELEASE</version>
 		</dependency>
-		<dependency>
-			<groupId>com.tilab.jade</groupId>
-			<artifactId>jade</artifactId>
-			<version>${jade.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.tilab.jade</groupId>
-			<artifactId>jade-misc</artifactId>
-			<version>${jade-misc.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.tilab.jade</groupId>
-			<artifactId>jade-xml-codec</artifactId>
-			<version>${jade-xml-codec.version}</version>
-		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.jdom/jdom2 -->
 		<dependency>
 			<groupId>org.jdom</groupId>
@@ -44,34 +26,59 @@
 		<!-- https://mvnrepository.com/artifact/javax.jms/jms -->
 		<dependency>
 			<groupId>javax.jms</groupId>
-			<artifactId>jms</artifactId>
-			<version>1.1</version>
+			<artifactId>jms-api</artifactId>
+			<version>1.1-rev-1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-yaml</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tilab.jade</groupId>
+			<artifactId>jade-xml-codec</artifactId>
+			<version>1.11.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tilab.jade</groupId>
+			<artifactId>jade</artifactId>
+			<version>4.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tilab.jade</groupId>
+			<artifactId>jade-misc</artifactId>
+			<version>2.8.0</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>
-		<repository>
-			<id>central</id>
-			<url>https://repo1.maven.org/maven2/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
+<!-- 		<repository> -->
+<!-- 			<id>central</id> -->
+<!-- 			<url>https://repo1.maven.org/maven2/</url> -->
+<!-- 			<releases> -->
+<!-- 				<enabled>true</enabled> -->
+<!-- 			</releases> -->
+<!-- 			<snapshots> -->
+<!-- 				<enabled>false</enabled> -->
+<!-- 			</snapshots> -->
+<!-- 		</repository> -->
 
-		<repository>
-			<id>tilab</id>
-			<url>https://jade.tilab.com/maven/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
+		<!-- <repository> -->
+		<!-- <id>tilab</id> -->
+		<!-- <url>https://jade.tilab.com/maven/</url> -->
+		<!-- <releases> -->
+		<!-- <enabled>true</enabled> -->
+		<!-- </releases> -->
+		<!-- <snapshots> -->
+		<!-- <enabled>false</enabled> -->
+		<!-- </snapshots> -->
+		<!-- </repository> -->
 
 	</repositories>
 

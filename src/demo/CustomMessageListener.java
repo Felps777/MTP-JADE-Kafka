@@ -1,13 +1,20 @@
 package demo;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.StringReader;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.listener.MessageListener;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jade.domain.FIPAAgentManagement.Envelope;
 import jade.lang.acl.ACLMessage;
@@ -45,28 +52,42 @@ public class CustomMessageListener implements MessageListener<String, String> {
 		Envelope env = new Envelope();
 
 		String msg = consumerRecord.value();
-		StringReader sr = new StringReader(msg);
+		
+		ObjectMapper mapper = new ObjectMapper();
 		try {
-			System.out.println(env.toString());
-			Object obj =  new InputStream(sr).readObject();
-			System.out.println(obj.toString());
-			env = (Envelope)obj;
-		} catch (ClassNotFoundException e) {
+			env = (Envelope) mapper.readValue(msg, Envelope.class);
+		} catch (JsonMappingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace(); 
+			e.printStackTrace();
 		}
+		
+		StringReader sr = new StringReader(msg);
+//		try {
+			System.out.println(env.toString());
+//			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
+			
+//			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(msg.trim().getBytes()));
+//			Object obj = ois.readObject();
+//			System.out.println(obj.toString());
+//			env = (Envelope) obj;
+//		} catch (ClassNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 		ACLMessage al = new ACLMessage();
-		
 
 		// env = xmlUtil.decode(tm, payload);
 
 		log.log(Level.INFO, "Message decode");
 
 		dispatcher.dispatchMessage(env, payload.toString().getBytes());
+		
 	}
 
 }

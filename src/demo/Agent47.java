@@ -13,7 +13,7 @@ public class Agent47 extends Agent {
 
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		AID dest = new AID("AgentSmith@Plat2", AID.ISGUID);
-		dest.addAddresses("tcp://192.168.0.7:7778/tpcEvents");
+		dest.addAddresses("tcp://192.168.1.96:7778/tpcEvents");
 		msg.addReceiver(dest);
 		msg.setContent("Hello!");
 		send(msg);

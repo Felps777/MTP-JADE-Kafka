@@ -22,8 +22,9 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package demo;
+package otros;
 
+import demo.MessageTransportProtocol;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.Profile;
@@ -41,7 +42,7 @@ import jade.wrapper.StaleProxyException;
  * 
  * @author Giovanni Caire - TILAB
  */
-public class HelloWorldAgent extends Agent {
+public class HelloWorldAgent2 extends Agent {
 
 	static Runtime runtime = Runtime.instance();
 	static Profile profile = new ProfileImpl();
@@ -52,20 +53,17 @@ public class HelloWorldAgent extends Agent {
 		try {
 			ContainerController home = getContainerController();
 //			AgentController agc = home.createNewAgent("correos", TopicMessageSenderAgent.class.getName(), null);
-//			AgentController agc2 = home.createNewAgent("lector1", TopicMessageReceiverAgent.class.getName(), null);
+			AgentController agc2 = home.createNewAgent("lector1", TopicMessageReceiverAgent.class.getName(), null);
 
 			//
 			// agc.start();
 			// agc2.start();
 
-			home.installMTP("tcp://127.0.0.1:8088/tpcEvents", MessageTransportProtocol.class.getName());
+			home.installMTP("tcp://127.0.0.1:8089", MessageTransportProtocol.class.getName());
 
 			ACLMessage message = new ACLMessage(ACLMessage.INFORM);
-			//message to MTP 
-			AID dest = new AID("TopicMessageReceiverAgent@Matrix",AID.ISGUID);
-	        dest.addAddresses("http://127.0.0.1:8088/tpcEvents");
-	        message.addReceiver(dest);
-			//	
+			message.addReceiver(new AID("AgentReceiver", AID.ISLOCALNAME));
+			message.setContent("Hello The World");
 			send(message);
 			
 		} catch (StaleProxyException | MTPException e) {

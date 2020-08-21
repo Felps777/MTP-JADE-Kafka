@@ -36,12 +36,11 @@ import com.sonicsw.ma.mgmtapi.config.*;
 import com.sonicsw.mq.mgmtapi.config.*;
 
 import demo.JmsMtpConfig;
-import demo.ProviderAdmin;
 import demo.TCPAddress;
 import ie.nuigalway.ecrg.jade.jmsmtp.common.JMSAddress;
 import jade.mtp.MTPException;
 
-public final class KafkaProviderAdmin implements ProviderAdmin {
+public final class KafkaProviderAdmin {
 
 	private static final Logger log = Logger.getLogger(KafkaProviderAdmin.class.getName());
 	private static final String classKey = "ie.nuigalway.ecrg.jade.jmsmtp.providerType.sonicmq.";

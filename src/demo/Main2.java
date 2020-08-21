@@ -8,19 +8,19 @@ import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
 
-public class Main {
+public class Main2 {
 
 	public static void main(String[] args) {
 //		String host = "127.0.0.1"; // Platform IP
 //		int port = 1099; // default-port 1099
 
-		String MTP_hostIP = "192.168.1.95"; // setting the same IP for both "172.16.200.100";
+		String MTP_hostIP = "192.168.1.96"; // setting the same IP for both "172.16.200.100";
 		String MTP_Port = "7778";
 
 		Runtime runtime = Runtime.instance();
 		Profile profile = new ProfileImpl();
 		profile.setParameter(Profile.GUI, "true");
-		profile.setParameter(Profile.PLATFORM_ID, "Plat1");
+		profile.setParameter(Profile.PLATFORM_ID, "Plat2");
 
 //		profile.setParameter(Profile.MTPS,
 //				"demo.MessageTransportProtocol(tcp://" + MTP_hostIP + ":" + MTP_Port + "/acc)");
@@ -34,7 +34,7 @@ public class Main {
 		try {
 			home.installMTP("tcp:kafka:json:" + MTP_hostIP + ":" + MTP_Port + "/tpcEvents",
 					MessageTransportProtocol.class.getName());
-			AgentController agc = home.createNewAgent("correos", Agent47.class.getName(), null);
+			AgentController agc = home.createNewAgent("lector", AgentSmith.class.getName(), null);
 			//agc.start();
 		} catch (StaleProxyException | MTPException e) {
 			e.printStackTrace();
