@@ -1,31 +1,46 @@
 package demo;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.StringReader;
-import java.util.Base64;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.springframework.kafka.listener.MessageListener;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import demo.TCPAddress;
 
+import jade.core.AID;
+import jade.core.Agent;
+import jade.core.Profile;
+import jade.core.ProfileImpl;
+import jade.core.Runtime;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.Envelope;
-import jade.lang.acl.ACLMessage;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.mtp.InChannel;
-import otros.MapMessageUtil;
+import jade.wrapper.AgentController;
+import jade.wrapper.ContainerController;
+import jade.wrapper.StaleProxyException;
+
 
 public class CustomMessageListener implements MessageListener<String, String> {
-
+	ContainerController containerRef;
+	Agent agente;
+	@SuppressWarnings("unused")
 	private FipaXMLUtil xmlUtil;
-	private MapMessageUtil mapUtil;
+
 	private InChannel.Dispatcher dispatcher; // dispatcher used to pass messages to the platform
+	@SuppressWarnings("unused")
 	private TCPAddress tAddress;
 //	private ProviderAdmin pAdmin;
 
@@ -38,54 +53,105 @@ public class CustomMessageListener implements MessageListener<String, String> {
 		this.dispatcher = dispatcher;
 		this.tAddress = jmsTA;
 		xmlUtil = new FipaXMLUtil();
-		mapUtil = new MapMessageUtil();
+
 
 //		pAdmin = new KafkaProviderAdmin();
 	}
 
+	@SuppressWarnings({ "deprecation", "unused" })
 	@Override
 	public void onMessage(ConsumerRecord<String, String> consumerRecord) {
 		// process message
 		// messageProcessor.process(consumerRecord.key(), consumerRecord.value());
 
 		StringBuffer payload = new StringBuffer();
+		StringBuffer dominio=new StringBuffer();
 		Envelope env = new Envelope();
-
-		String msg = consumerRecord.value();
 		
-		ObjectMapper mapper = new ObjectMapper();
+		String msg = consumerRecord.value();
+		String xml="";
+		SAXBuilder builder = new SAXBuilder();
+		Document doc = null;
 		try {
-			env = (Envelope) mapper.readValue(msg, Envelope.class);
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
+			doc = builder.build(new StringReader(msg));	
+			XMLOutputter xmlOutput = new XMLOutputter();
+			xmlOutput.setFormat(Format.getPrettyFormat());
+			xml = xmlOutput.outputString(doc);			
+		} catch (JDOMException e) {
+
 			e.printStackTrace();
-		} catch (JsonProcessingException e) {
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}			
+
+
+		log.log(Level.INFO, "Message decode");
+		//Agent a = new Agent();
+		
+		//AMSAgentDescription template = new AMSAgentDescription ();
+		//SearchConstraints c = new SearchConstraints();
+		//c.setMaxResults ( -1L); /// All of them
+
+
+		
+		if(containerRef==null) {
+			Agent agenteNew = new Agent();
+			Runtime rt = Runtime.instance();
+	        ProfileImpl profile = new ProfileImpl(false);
+	        profile.setParameter(Profile.CONTAINER_NAME,"containerPruebaUtima");
+	        containerRef = rt.createAgentContainer(profile);
+	        AgentController agentController;
+			try {
+				agentController = containerRef.acceptNewAgent("pruebaUltima", agenteNew);
+				agentController.start();
+				agente=agenteNew;
+			} catch (StaleProxyException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}			
+		}
+        
+		
+		env = xmlUtil.decode(xml, payload,dominio);
+
+		
+		DFAgentDescription[] agents = null;
+		DFAgentDescription templateDFA = new DFAgentDescription();
+		ServiceDescription sd = new ServiceDescription();
+		if(!dominio.toString().contains("null")) {
+			sd.setType(dominio.toString());
+			sd.setName(dominio.toString());			
+		}
+
+		templateDFA.addServices(sd);
+
+
+		List<AID> customAgents = new ArrayList<>();	
+		try {
+			agents = DFService.search(agente, templateDFA);
+	        for (int i=0; i < agents.length; i++)
+	        {
+	            AID idd = agents[i].getName();
+	            String agentLocalName = idd.getLocalName();
+                customAgents.add(idd);
+	            System.out.println(agentLocalName);
+	        }
+		} catch (FIPAException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+
+		for (AID element : customAgents) {
 		
-		StringReader sr = new StringReader(msg);
-//		try {
-			System.out.println(env.toString());
-//			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
-			
-//			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(msg.trim().getBytes()));
-//			Object obj = ois.readObject();
-//			System.out.println(obj.toString());
-//			env = (Envelope) obj;
-//		} catch (ClassNotFoundException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+			 env.addIntendedReceiver(element);
+			 env.addTo(element);
+		}
 
-		ACLMessage al = new ACLMessage();
-
-		// env = xmlUtil.decode(tm, payload);
-
-		log.log(Level.INFO, "Message decode");
-
+		//GenericMessage msgGene = (GenericMessage) payload;
+		//ACLMessage acl = msgGene.getACLMessage();
+		//ACLMessage prueba = (ACLMessage) payload.;
 		dispatcher.dispatchMessage(env, payload.toString().getBytes());
 		
 	}

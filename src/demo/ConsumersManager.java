@@ -6,14 +6,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.ContainerProperties.AckMode;
@@ -22,11 +17,19 @@ import jade.mtp.InChannel;
 
 public class ConsumersManager {
 
-	private static final String KAFKA_BROKER = "localhost:29092";
-//	Configurer conf = new Configurer();
+	String KAFKA_BROKER;
+	
+	public String getKAFKA_BROKER() {
+		return KAFKA_BROKER;
+	}
+
+	public void setKAFKA_BROKER(String kAFKA_BROKER) {
+		KAFKA_BROKER = kAFKA_BROKER;
+	}
+
+	//	Configurer conf = new Configurer();
 	private static Map<String, ConcurrentMessageListenerContainer<String, String>> consumersMap = new HashMap<>();
-	// stores the topic consumers
-	private ConsumerFactory<String, String> consumerFactory_String = null;
+
 	private ContainerProperties containerProps;
 
 	public ConsumersManager() {
@@ -46,6 +49,7 @@ public class ConsumersManager {
 		}
 
 		// pasamos el nombre del topico a escuchar
+		this.setKAFKA_BROKER(jmsTA.getBrokerURL());
 		containerProps = new ContainerProperties(jmsTA.getTopicName());
 		containerProps.setPollTimeout(100);
 		container = createContainer(containerProps);
@@ -95,6 +99,7 @@ public class ConsumersManager {
 
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void removeAllListeners() throws Exception {
 		Set keys = consumersMap.keySet();
 
@@ -123,7 +128,7 @@ public class ConsumersManager {
 	}
 
 	private ConcurrentMessageListenerContainer<String, String> createContainer(ContainerProperties containerProps) {
-		Map<String, Object> props = consumerProps("prueba");
+		Map<String, Object> props = consumerProps("prueba_copia");
 		ConsumerFactory<String, String> factory = consumerFactory_String(props);
 		Boolean enableAutoCommit = (Boolean) props.get(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG);
 		if (!enableAutoCommit) {
@@ -140,7 +145,7 @@ public class ConsumersManager {
 
 	private Map<String, Object> consumerProps(String groupId) {
 		Map<String, Object> props = new HashMap<>();
-		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_BROKER);
+		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, this.getKAFKA_BROKER());
 		props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
 		props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
 		props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "100");

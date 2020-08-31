@@ -26,15 +26,9 @@ public class MessageTransportProtocol implements MTP {
 	private static final Logger log = Logger.getLogger(MessageTransportProtocol.class.getName());
 	static {
 
-		// Load in config info
-//    String resource = "/log4j-mtp.properties";
-//    URL configFileResource = MessageTransportProtocol.class.getResource(
-//                                   resource);
-//    PropertyConfigurator.configure(configFileResource);
 
-		JmsMtpConfig temp = new JmsMtpConfig();
-//    log = Category.getRoot();
 
+		KfkMtpConfig temp = new KfkMtpConfig();
 		log.log(Level.INFO, "Init of KAFKA-MTP");
 		log.log(Level.INFO, "Starting MTP configuration");
 
@@ -156,14 +150,14 @@ public class MessageTransportProtocol implements MTP {
 	 * @return QueueConnection A QueueConnection object for the broker in jmsTA
 	 * @throws Exception Error during manager creation
 	 */
-	public JmsProviderManager getProviderManager(TCPAddress jmsTA) throws Exception {
+	public KfkProviderManager getProviderManager(TCPAddress jmsTA) throws Exception {
 
 		// check to see if the Queue connection has been connected
 		if (!providerManagers.containsKey(jmsTA.getProviderType())) {
 			setupProviderManager(jmsTA);
 		}
 
-		return (JmsProviderManager) providerManagers.get(jmsTA.getProviderType());
+		return (KfkProviderManager) providerManagers.get(jmsTA.getProviderType());
 	}
 
 	/**
@@ -178,7 +172,7 @@ public class MessageTransportProtocol implements MTP {
 
 		try {
 
-			JmsProviderManager pm = new ProviderManager();
+			KfkProviderManager pm = new ProviderManager();
 
 			log.log(Level.INFO, "Placing the connection into the hashmap");
 
@@ -202,7 +196,7 @@ public class MessageTransportProtocol implements MTP {
 
 		for (Iterator i = pms.iterator(); i.hasNext();) {
 
-			JmsProviderManager temp = (JmsProviderManager) i.next();
+			KfkProviderManager temp = (KfkProviderManager) i.next();
 
 			try {
 				temp.deactivate();
