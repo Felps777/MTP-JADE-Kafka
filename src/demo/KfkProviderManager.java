@@ -30,7 +30,7 @@ import jade.domain.FIPAAgentManagement.Envelope;
 import jade.mtp.InChannel;
 import jade.mtp.MTPException;
 
-public abstract interface JmsProviderManager {
+public abstract interface KfkProviderManager {
 
 	/**
 	 * Address specific activation of a MTP

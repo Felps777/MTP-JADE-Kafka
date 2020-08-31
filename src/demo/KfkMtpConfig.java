@@ -11,9 +11,9 @@ package demo;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-public class JmsMtpConfig {
+public class KfkMtpConfig {
 
-	private static final Logger log = Logger.getLogger(JmsMtpConfig.class.getName());
+	private static final Logger log = Logger.getLogger(KfkMtpConfig.class.getName());
 	private static Properties props = new Properties();
 
 	// Default Setting read in from the Configuration file
@@ -40,7 +40,7 @@ public class JmsMtpConfig {
 	/**
 	 * Constructor which loads in the configuration file
 	 */
-	public JmsMtpConfig() {
+	public KfkMtpConfig() {
 
 		// default providerFormat setting
 		DEFAULT_PROVIDER_TYPE = "kafka";
