@@ -35,7 +35,7 @@ import javax.jms.QueueSession;
 import com.sonicsw.ma.mgmtapi.config.*;
 import com.sonicsw.mq.mgmtapi.config.*;
 
-import demo.JmsMtpConfig;
+import demo.KfkMtpConfig;
 import demo.TCPAddress;
 import ie.nuigalway.ecrg.jade.jmsmtp.common.JMSAddress;
 import jade.mtp.MTPException;
@@ -107,7 +107,7 @@ public final class KafkaProviderAdmin {
 			int maxQueueSize;
 
 			try {
-				maxQueueSize = Integer.parseInt(JmsMtpConfig.getProperty(classKey + "queue.maxSize", "50000"));
+				maxQueueSize = Integer.parseInt(KfkMtpConfig.getProperty(classKey + "queue.maxSize", "50000"));
 			} catch (Exception any) {
 				maxQueueSize = 50000; // Default setting if these an non-int value in the config
 			}
@@ -117,7 +117,7 @@ public final class KafkaProviderAdmin {
 			int queueSaveThr;
 
 			try {
-				queueSaveThr = Integer.parseInt(JmsMtpConfig.getProperty(classKey + "Queue.saveThreshold", "25000"));
+				queueSaveThr = Integer.parseInt(KfkMtpConfig.getProperty(classKey + "Queue.saveThreshold", "25000"));
 			} catch (Exception any) {
 				queueSaveThr = 50000; // Default setting if these an non-int value in the config
 			}
