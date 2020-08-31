@@ -43,21 +43,10 @@ public class TCPAddress implements TransportAddress {
 	private String password; // Password used to access queue
 	private String brokerURL;
 //	private String queueName;
-	private String topicName = "tpcEvents";
+	private String topicName;
 	private String groupID;
-//  private static Category log = Category.getRoot();
 
-	// Address makeup
-	// jms:provider_type:messge_type:persistence:username:password:hostname:port/queuename
-	// Example Address
-	// jms:sonicmq:xml:persistent:edcurry:edspass:message.broker.foobar.com:1099/jade/jade-platform.foobar.com:1098
 
-	/**
-	 * Creates a new JMSAddress object.
-	 * 
-	 * @param addy A specific Address
-	 * @throws MTPException Malformed Address
-	 */
 	public TCPAddress(String addy) throws MTPException {
 
 //		if (log.isDebugEnabled()) {
@@ -86,17 +75,17 @@ public class TCPAddress implements TransportAddress {
 			int endOfMsgType = addy.indexOf(':', endOfProviderType + 1);
 			msgType = addy.substring(endOfProviderType + 1, endOfMsgType);
 
-			if (msgType.trim().equals("") || ((!msgType.equals(JmsMtpConfig.MSG_XML))
-					&& (!msgType.equals(JmsMtpConfig.MSG_MAP)) && (!msgType.equals(JmsMtpConfig.MSG_JSON)))) {
+			if (msgType.trim().equals("") || ((!msgType.equals(KfkMtpConfig.MSG_XML))
+					&& (!msgType.equals(KfkMtpConfig.MSG_MAP)) && (!msgType.equals(KfkMtpConfig.MSG_JSON)))) {
 				throw new MTPException("Missing  or invalid message type: " + msgType);
 			}
 
 //			 Broker URL: '127.0.0.1:1099'
 			int brokerUrlEnd = addy.indexOf('/', endOfProtocol + 1);
-			brokerURL = addy.substring(endOfProtocol + 1, brokerUrlEnd);
+			brokerURL = addy.substring(endOfProtocol + 10, brokerUrlEnd);
 
 			// Queue Name : 'queue/jade/159.134.244.58'
-			String topicName = addy.substring(brokerUrlEnd + 1);
+			topicName = addy.substring(brokerUrlEnd + 1);
 			if (topicName.trim().equals("")) {
 				throw new MTPException("Missing topicName ");
 			}
@@ -121,14 +110,14 @@ public class TCPAddress implements TransportAddress {
 //		}
 
 		protocol = "tcp";
-		providerType = JmsMtpConfig.DEFAULT_PROVIDER_TYPE;
-		msgType = JmsMtpConfig.DEFAULT_MSG_TYPE;
+		providerType = KfkMtpConfig.DEFAULT_PROVIDER_TYPE;
+		msgType = KfkMtpConfig.DEFAULT_MSG_TYPE;
 //		msgPersistence = JmsMtpConfig.DEFAULT_MSG_PERSISTENCE;
 //		username = JmsMtpConfig.DEFAULT_USERNAME;
 //		password = JmsMtpConfig.DEFAULT_PASSWORD;
-		brokerURL = JmsMtpConfig.DEFAULT_BROKER_URL;
+		brokerURL = KfkMtpConfig.DEFAULT_BROKER_URL;
 //		queueName = JmsMtpConfig.DEFAULT_QUEUE_NAME;
-		topicName = JmsMtpConfig.DEFAULT_TOPIC_NAME;
+		topicName = KfkMtpConfig.DEFAULT_TOPIC_NAME;
 	}
 
 	/**

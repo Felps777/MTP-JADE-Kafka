@@ -32,15 +32,15 @@ import java.util.logging.Logger;
 
 import jade.domain.FIPAAgentManagement.Envelope;
 import jade.mtp.InChannel.Dispatcher;
-import otros.MapMessageUtil;
+
 import jade.mtp.MTPException;
 
-public class ProviderManager implements JmsProviderManager{
+public class ProviderManager implements KfkProviderManager{
 
 	private static final Logger log = Logger.getLogger(ProviderManager.class.getName());
 //	private QLManager qlManager; // Use to create queue listeners
 	private FipaXMLUtil xmlUtil; // Utility used for FIPA XML messages
-	private MapMessageUtil mapUtil; // Utility used for JMS MapMessages
+//	private MapMessageUtil mapUtil; // Utility used for JMS MapMessages
 //	public ProviderAdmin providerAdmin;
 	private HashMap brokerConnections; // HashMap of connections to JMS broker
 	private ConsumersManager cMan;
@@ -55,7 +55,7 @@ public class ProviderManager implements JmsProviderManager{
 		// topico = topic;
 		// grupoId = groupId;
 		xmlUtil = new FipaXMLUtil();
-		mapUtil = new MapMessageUtil();
+//		mapUtil = new MapMessageUtil();
 		brokerConnections = new HashMap();
 //		qlManager = new QLManager();
 		cMan = new ConsumersManager();
@@ -136,7 +136,7 @@ public class ProviderManager implements JmsProviderManager{
 
 			String message;
 
-			if (jmsTA.getMsgType().equals(JmsMtpConfig.MSG_XML)) {
+			if (jmsTA.getMsgType().equals(KfkMtpConfig.MSG_XML)) {
 				log.log(Level.INFO, "Build FIPA XML envelope");
 				message = xmlUtil.encode(env, payload);
 			} else {
@@ -146,39 +146,9 @@ public class ProviderManager implements JmsProviderManager{
 				message = env.toString();
 			}
 
-			pMAn.getSenderTemplate_String().send(jmsTA.getTopicName(), message);
+			pMAn.getSenderTemplate_String(jmsTA).send(jmsTA.getTopicName(), message);
 
-//			QueueConnection conn = this.getBrokerConnection(jmsTA);
-//			QueueSession session = conn.createQueueSession(false, QueueSession.AUTO_ACKNOWLEDGE);
-//			Queue que = session.createQueue(jmsTA.getQueueName());
-//			QueueSender send = session.createSender(que);
-//
-//			log.log(Level.INFO, "Setting Persistence");
-//
-//			if (jmsTA.getMsgPersistence().equals(JmsMtpConfig.MSG_PERSISTENT)) {
-//				send.setDeliveryMode(DeliveryMode.PERSISTENT);
-//			} else {
-//				send.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
-//			}
-//
-//			log.log(Level.INFO, "Create the Message");
-//
-//			Message message;
-//
-//			if (jmsTA.getMsgType().equals(JmsMtpConfig.MSG_XML)) {
-//				log.log(Level.INFO, "Build FIPA XML envelope");
-//				message = session.createTextMessage(xmlUtil.encode(env, payload));
-//			} else {
-//				log.log(Level.INFO, "Build MapMessage");
-//				message = session.createMapMessage();
-//				mapUtil.encode((MapMessage) message, env, payload);
-//			}
-//
-//			log.log(Level.INFO, "Send the Message");
-//
-//			send.send(message);
-//			send.close();
-//			session.close();
+
 		} catch (ClassCastException cce) {
 			log.log(Level.SEVERE, "Invaild JMS Address");
 			throw new MTPException("Address mismatch: this is not a valid JMS address.", cce);
